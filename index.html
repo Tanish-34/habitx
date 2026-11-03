@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>HABITX – Build Discipline. Become Unstoppable.</title>
+  <meta name="description" content="HABITX – Premium Habit Tracker for ambitious people." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HABITX" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React + ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            grotesk: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            beast: {
+              bg: '#0a0a0a',
+              surface: '#111111',
+              card: '#1a1a1a',
+              border: '#2a2a2a',
+              accent: '#ef4444',
+              accentAlt: '#f97316',
+              text: '#f5f5f5',
+              muted: '#737373',
+            },
+            normal: {
+              bg: '#f8fafc',
+              surface: '#ffffff',
+              card: '#ffffff',
+              border: '#e2e8f0',
+              accent: '#3b82f6',
+              accentAlt: '#10b981',
+              text: '#0f172a',
+              muted: '#64748b',
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'slide-in': 'slideIn 0.3s ease-out',
+            'pulse-slow': 'pulse 3s infinite',
+            'bounce-slow': 'bounce 2s infinite',
+            'shimmer': 'shimmer 1.5s infinite',
+            'scale-in': 'scaleIn 0.2s ease-out',
+          },
+          keyframes: {
+            fadeIn: { from: { opacity: 0 }, to: { opacity: 1 } },
+            slideUp: { from: { opacity: 0, transform: 'translateY(20px)' }, to: { opacity: 1, transform: 'translateY(0)' } },
+            slideIn: { from: { opacity: 0, transform: 'translateX(-20px)' }, to: { opacity: 1, transform: 'translateX(0)' } },
+            shimmer: { '0%': { backgroundPosition: '-200% 0' }, '100%': { backgroundPosition: '200% 0' } },
+            scaleIn: { from: { opacity: 0, transform: 'scale(0.9)' }, to: { opacity: 1, transform: 'scale(1)' } },
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 0; overflow-x: hidden; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .font-grotesk { font-family: 'Space Grotesk', sans-serif; }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+    .beast-mode::-webkit-scrollbar-thumb { background: #ef4444; }
+
+    /* Gradient text */
+    .gradient-text-beast { background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-text-normal { background: linear-gradient(135deg, #3b82f6, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .gradient-text-white { background: linear-gradient(135deg, #ffffff, #a3a3a3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+    /* Shimmer skeleton */
+    .skeleton { background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+    .skeleton-light { background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+
+    /* Glass effect */
+    .glass-dark { background: rgba(26,26,26,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .glass-light { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+
+    /* Fire emoji animation */
+    .fire-animate { animation: fireGlow 1.5s ease-in-out infinite alternate; }
+    @keyframes fireGlow { from { filter: drop-shadow(0 0 4px #f97316); } to { filter: drop-shadow(0 0 12px #ef4444); } }
+
+    /* Progress bar animation */
+    .progress-fill { transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    /* Checkbox custom */
+    .habit-check { transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .habit-check:active { transform: scale(0.85); }
+
+    /* Bottom nav safe area */
+    .bottom-nav { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+    /* Modal overlay */
+    .modal-overlay { animation: fadeIn 0.2s ease-out; }
+    .modal-content { animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    /* Toast */
+    .toast { animation: slideUp 0.3s ease-out; }
+
+    /* Splash screen */
+    .splash-bg { background: radial-gradient(ellipse at center, #1a0a0a 0%, #0a0a0a 100%); }
+
+    /* Button hover effects */
+    .btn-beast { transition: all 0.2s ease; }
+    .btn-beast:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(239,68,68,0.3); }
+    .btn-beast:active { transform: translateY(0); }
+    .btn-normal { transition: all 0.2s ease; }
+    .btn-normal:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.25); }
+    .btn-normal:active { transform: translateY(0); }
+
+    /* Card hover */
+    .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .card-hover:hover { transform: translateY(-2px); }
+
+    /* Input focus */
+    input:focus, textarea:focus, select:focus { outline: none; }
+
+    /* Streak fire */
+    @keyframes streakPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .streak-icon { animation: streakPulse 2s ease-in-out infinite; }
+
+    /* Confetti effect for completion */
+    @keyframes confetti { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(-60px) rotate(720deg); opacity: 0; } }
+    .confetti-particle { animation: confetti 0.6s ease-out forwards; }
+  </style>
+</head>
+<body class="font-inter">
+  <div id="root"></div>
+  <script type="text/babel" src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
